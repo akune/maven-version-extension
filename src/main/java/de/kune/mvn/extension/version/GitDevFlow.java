@@ -44,7 +44,7 @@ public class GitDevFlow implements VersionExtension {
     private final static Pattern hotfixReleaseTagPattern = compile(
         "refs/tags/v(.*?\\.(support|hotfix)\\.)?(?<version>\\d+\\.\\d+\\.\\d+)");
 
-    private static String determineVersion(Logger logger, File gitDirectory) {
+    protected static String determineVersion(Logger logger, File gitDirectory) {
         if (gitDirectory == null || !gitDirectory.exists() || !gitDirectory.isDirectory()) {
             logger.info(
                 "Working directory ("
