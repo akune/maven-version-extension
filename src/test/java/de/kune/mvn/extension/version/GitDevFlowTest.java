@@ -23,10 +23,13 @@ public class GitDevFlowTest {
         return Arrays.asList(
             new Object[][] {
                     { "0.0.0", "init-no-release" },
-                    { "0.0.0", "init-no-release" },
                     { "0.0.0", "init-with-release" },
-                    { "0.0.1", "init-with-release-and-chore-commit" }, 
-                    { "0.0.1", "init-no-release-and-chore-commit" } });
+                    { "0.0.1", "init-with-release-and-chore-commit" },
+                    { "0.0.1", "init-no-release-and-chore-commit" },
+                    { "feat-a-SNAPSHOT", "branch" },
+                    { "feat-a-SNAPSHOT", "branch-with-merged-release" },
+                    { "0.1.1", "merged-branch-with-merged-release" }
+            });
     }
 
     public GitDevFlowTest(String expectedVersion, String testcase) {

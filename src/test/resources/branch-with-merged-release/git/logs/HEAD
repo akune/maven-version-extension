@@ -1,0 +1,52 @@
+0000000000000000000000000000000000000000 de4a78c2133e92354f63aed8a589c84d784dc858 Alexander Kune <alexander@kune.de> 1530950296 +0200	commit (initial): initial commit
+de4a78c2133e92354f63aed8a589c84d784dc858 c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 Alexander Kune <alexander@kune.de> 1530954819 +0200	commit: chore: 2
+c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 Alexander Kune <alexander@kune.de> 1530966478 +0200	checkout: moving from master to feat-a
+c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 4adf5633b07d0ac5119a181fca79391b6191fa05 Alexander Kune <alexander@kune.de> 1530966496 +0200	commit: feat: 3a
+4adf5633b07d0ac5119a181fca79391b6191fa05 2539d9e4d8555198dd1d1c1e4c041efc455460b6 Alexander Kune <alexander@kune.de> 1530966521 +0200	commit: feat: 4a
+2539d9e4d8555198dd1d1c1e4c041efc455460b6 c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 Alexander Kune <alexander@kune.de> 1530966542 +0200	checkout: moving from feat-a to c631a1bbfde59a6df2e362f2a1808e0d4729b0e0
+c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 2539d9e4d8555198dd1d1c1e4c041efc455460b6 Alexander Kune <alexander@kune.de> 1530966555 +0200	checkout: moving from c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 to feat-a
+2539d9e4d8555198dd1d1c1e4c041efc455460b6 c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 Alexander Kune <alexander@kune.de> 1530967687 +0200	checkout: moving from feat-a to master
+c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530967712 +0200	commit: feat: 3
+317b970a3b52e3deb6d74727d60beae4452779da 2539d9e4d8555198dd1d1c1e4c041efc455460b6 Alexander Kune <alexander@kune.de> 1530967718 +0200	checkout: moving from master to feat-a
+2539d9e4d8555198dd1d1c1e4c041efc455460b6 b4caa7846b248fdf86b751434a76523e3b6a2515 Alexander Kune <alexander@kune.de> 1530967846 +0200	commit (amend): chore: 4a
+b4caa7846b248fdf86b751434a76523e3b6a2515 4adf5633b07d0ac5119a181fca79391b6191fa05 Alexander Kune <alexander@kune.de> 1530967909 +0200	checkout: moving from feat-a to 4adf5633b07d0ac5119a181fca79391b6191fa05
+4adf5633b07d0ac5119a181fca79391b6191fa05 4bdd98c5ac602d2497cbaf13f275989026b7be6d Alexander Kune <alexander@kune.de> 1530967914 +0200	commit (amend): chore: 3a
+4bdd98c5ac602d2497cbaf13f275989026b7be6d b4caa7846b248fdf86b751434a76523e3b6a2515 Alexander Kune <alexander@kune.de> 1530967922 +0200	checkout: moving from 4bdd98c5ac602d2497cbaf13f275989026b7be6d to feat-a
+b4caa7846b248fdf86b751434a76523e3b6a2515 4adf5633b07d0ac5119a181fca79391b6191fa05 Alexander Kune <alexander@kune.de> 1530967942 +0200	checkout: moving from feat-a to 4adf5633b07d0ac5119a181fca79391b6191fa05
+4adf5633b07d0ac5119a181fca79391b6191fa05 3e2b4002f484b66882c237ff42518cb7e992c470 Alexander Kune <alexander@kune.de> 1530967948 +0200	commit (amend): chore: 3a
+3e2b4002f484b66882c237ff42518cb7e992c470 b4caa7846b248fdf86b751434a76523e3b6a2515 Alexander Kune <alexander@kune.de> 1530967968 +0200	checkout: moving from 3e2b4002f484b66882c237ff42518cb7e992c470 to feat-a
+b4caa7846b248fdf86b751434a76523e3b6a2515 c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 Alexander Kune <alexander@kune.de> 1530968006 +0200	rebase -i (start): checkout HEAD~3
+c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 4adf5633b07d0ac5119a181fca79391b6191fa05 Alexander Kune <alexander@kune.de> 1530968006 +0200	rebase -i: fast-forward
+4adf5633b07d0ac5119a181fca79391b6191fa05 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530968006 +0200	rebase -i (reword): chore: 3a
+46582f6294c44ec3baef121be97d23d7b0d5a087 c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 Alexander Kune <alexander@kune.de> 1530968016 +0200	rebase -i (pick): chore: 4a
+c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 Alexander Kune <alexander@kune.de> 1530968006 +0200	rebase -i (finish): returning to refs/heads/feat-a
+c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968031 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 Alexander Kune <alexander@kune.de> 1530968041 +0200	checkout: moving from master to feat-a
+c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 f44cb98e264b4cb91b4c08e57c0f420217f97232 Alexander Kune <alexander@kune.de> 1530968045 +0200	merge master: Merge made by the 'recursive' strategy.
+f44cb98e264b4cb91b4c08e57c0f420217f97232 b8fc61958473ef2f3345946adc648b0a8d1062ab Alexander Kune <alexander@kune.de> 1530968068 +0200	commit: chore: 5a
+b8fc61958473ef2f3345946adc648b0a8d1062ab 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968084 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da b8fc61958473ef2f3345946adc648b0a8d1062ab Alexander Kune <alexander@kune.de> 1530968107 +0200	checkout: moving from master to feat-a
+b8fc61958473ef2f3345946adc648b0a8d1062ab 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968128 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da b8fc61958473ef2f3345946adc648b0a8d1062ab Alexander Kune <alexander@kune.de> 1530968159 +0200	checkout: moving from master to feat-a
+b8fc61958473ef2f3345946adc648b0a8d1062ab 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968805 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da b8fc61958473ef2f3345946adc648b0a8d1062ab Alexander Kune <alexander@kune.de> 1530968819 +0200	checkout: moving from master to feat-a
+b8fc61958473ef2f3345946adc648b0a8d1062ab c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 Alexander Kune <alexander@kune.de> 1530968835 +0200	rebase: checkout c506e78e4bd8df5dbec15eac9b5b7dc96eba4987
+c506e78e4bd8df5dbec15eac9b5b7dc96eba4987 ee5d67d27ea3d766815fdb81a6956e287faf3114 Alexander Kune <alexander@kune.de> 1530968835 +0200	rebase: feat: 3
+ee5d67d27ea3d766815fdb81a6956e287faf3114 6349f19c4668756d1d656d9696c57818a4b4d3ac Alexander Kune <alexander@kune.de> 1530968835 +0200	rebase: chore: 5a
+6349f19c4668756d1d656d9696c57818a4b4d3ac 6349f19c4668756d1d656d9696c57818a4b4d3ac Alexander Kune <alexander@kune.de> 1530968835 +0200	rebase finished: returning to refs/heads/feat-a
+6349f19c4668756d1d656d9696c57818a4b4d3ac 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530968907 +0200	rebase -i (start): checkout HEAD~3
+46582f6294c44ec3baef121be97d23d7b0d5a087 ff4cdb7370a199518f1ecd480dceb712219f7bb1 Alexander Kune <alexander@kune.de> 1530968907 +0200	rebase -i (pick): chore: 5a
+ff4cdb7370a199518f1ecd480dceb712219f7bb1 ff4cdb7370a199518f1ecd480dceb712219f7bb1 Alexander Kune <alexander@kune.de> 1530968907 +0200	rebase -i (finish): returning to refs/heads/feat-a
+ff4cdb7370a199518f1ecd480dceb712219f7bb1 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968915 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da ff4cdb7370a199518f1ecd480dceb712219f7bb1 Alexander Kune <alexander@kune.de> 1530968930 +0200	checkout: moving from master to feat-a
+ff4cdb7370a199518f1ecd480dceb712219f7bb1 ff4cdb7370a199518f1ecd480dceb712219f7bb1 Alexander Kune <alexander@kune.de> 1530968942 +0200	rebase -i (start): checkout HEAD
+ff4cdb7370a199518f1ecd480dceb712219f7bb1 ff4cdb7370a199518f1ecd480dceb712219f7bb1 Alexander Kune <alexander@kune.de> 1530968942 +0200	rebase -i (finish): returning to refs/heads/feat-a
+ff4cdb7370a199518f1ecd480dceb712219f7bb1 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530968955 +0200	rebase -i (start): checkout HEAD~
+46582f6294c44ec3baef121be97d23d7b0d5a087 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530968955 +0200	rebase -i (finish): returning to refs/heads/feat-a
+46582f6294c44ec3baef121be97d23d7b0d5a087 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968965 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530968973 +0200	checkout: moving from master to feat-a
+46582f6294c44ec3baef121be97d23d7b0d5a087 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530968982 +0200	checkout: moving from feat-a to feat-a
+46582f6294c44ec3baef121be97d23d7b0d5a087 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530968985 +0200	checkout: moving from feat-a to master
+317b970a3b52e3deb6d74727d60beae4452779da 46582f6294c44ec3baef121be97d23d7b0d5a087 Alexander Kune <alexander@kune.de> 1530969010 +0200	checkout: moving from master to feat-a
+46582f6294c44ec3baef121be97d23d7b0d5a087 1c98f862e7ba5d4fa262116b6d52e359183aa42c Alexander Kune <alexander@kune.de> 1530969029 +0200	merge master: Merge made by the 'recursive' strategy.
+1c98f862e7ba5d4fa262116b6d52e359183aa42c 01c6d3f9e0c7e2a326eb3a9ff1c3182b22c78df1 Alexander Kune <alexander@kune.de> 1530969050 +0200	commit: chore: 4a

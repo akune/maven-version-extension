@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 de4a78c2133e92354f63aed8a589c84d784dc858 Alexander Kune <alexander@kune.de> 1530950296 +0200	commit (initial): initial commit
+de4a78c2133e92354f63aed8a589c84d784dc858 c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 Alexander Kune <alexander@kune.de> 1530954819 +0200	commit: chore: 2
+c631a1bbfde59a6df2e362f2a1808e0d4729b0e0 317b970a3b52e3deb6d74727d60beae4452779da Alexander Kune <alexander@kune.de> 1530967712 +0200	commit: feat: 3
+317b970a3b52e3deb6d74727d60beae4452779da 01c6d3f9e0c7e2a326eb3a9ff1c3182b22c78df1 Alexander Kune <alexander@kune.de> 1530969100 +0200	merge feat-a: Fast-forward
