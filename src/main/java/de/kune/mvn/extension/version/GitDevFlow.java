@@ -39,10 +39,10 @@ public class GitDevFlow implements VersionExtension {
 
     private static final String UNKNOWN_SNAPSHOT = "unknown-SNAPSHOT";
 
-    private final static Pattern releaseTagPattern = compile("refs/tags/v(?<version>\\d+\\.\\d+\\.\\d+)");
+    private final static Pattern releaseTagPattern = compile("refs/tags/v?(?<version>\\d+\\.\\d+\\.\\d+)");
 
     private final static Pattern hotfixReleaseTagPattern = compile(
-        "refs/tags/v(.*?\\.(support|hotfix)\\.)?(?<version>\\d+\\.\\d+\\.\\d+)");
+        "refs/tags/v?(.*?\\.(support|hotfix)\\.)?(?<version>\\d+\\.\\d+\\.\\d+)");
 
     protected static String determineVersion(Logger logger, File gitDirectory) {
         if (gitDirectory == null || !gitDirectory.exists() || !gitDirectory.isDirectory()) {
