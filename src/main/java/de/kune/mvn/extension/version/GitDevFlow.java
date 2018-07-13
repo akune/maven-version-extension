@@ -38,6 +38,8 @@ public class GitDevFlow implements VersionExtension {
     private static final Pattern hotfixBranchPattern = compile(
         "(?<type>" + join("|", hotfixBranchPrefixes) + ")-(?<base>.*?)");
 
+    private static final Pattern majorIncrementPattern = Pattern.compile("(^|\\n)BREAKING CHANGE:?.*$");
+
     private static final Set<String> minorIncrementTypes = unmodifiableSet(new HashSet<String>(asList("feat")));
 
     private static final Set<String> patchIncrementTypes = unmodifiableSet(
@@ -161,7 +163,11 @@ public class GitDevFlow implements VersionExtension {
     private static SemVer determineVersion(Logger logger, List<String> commitMessagesAfterRelease, SemVer baseRelease) {
         Set<String> commitTypes = extractTypes(commitMessagesAfterRelease);
         SemVer newVer = baseRelease == null ? SemVer.initial() : baseRelease;
-        if (CollectionUtils.intersection(commitTypes, minorIncrementTypes).size() > 0) {
+        commitMessagesAfterRelease.stream().filter(m->majorIncrementPattern.matcher(m).find()).count();
+        if (commitMessagesAfterRelease.stream().filter(m->majorIncrementPattern.matcher(m).find()).findAny().isPresent()) {
+            logger.info("Found major increment pattern(s)");
+            newVer = newVer.incrementMajor(1);
+        } else if (CollectionUtils.intersection(commitTypes, minorIncrementTypes).size() > 0) {
             logger.info("Found minor increment type(s)");
             newVer = newVer.incrementMinor(1);
         } else if (CollectionUtils.intersection(commitTypes, patchIncrementTypes).size() > 0) {
@@ -224,7 +230,7 @@ public class GitDevFlow implements VersionExtension {
                 logger.debug("Stopping at tag(s) " + revTags);
                 break;
             }
-            result.add(r.getShortMessage());
+            result.add(r.getFullMessage());
             if (r.getParentCount() > 0) {
                 r = revWalk.parseCommit(r.getParent(0));
             } else {

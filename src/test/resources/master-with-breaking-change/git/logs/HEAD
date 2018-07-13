@@ -1,0 +1,31 @@
+0000000000000000000000000000000000000000 6f5e5f24eb77f3870df65c560fab2024566f73fe Alexander Kune <alexander@kune.de> 1531491273 +0200	commit (initial): chore: initial commit
+6f5e5f24eb77f3870df65c560fab2024566f73fe cc65868ce4ad2abafe6a6b3910457f4114b148b0 Alexander Kune <alexander@kune.de> 1531491589 +0200	commit: chore: add test file
+cc65868ce4ad2abafe6a6b3910457f4114b148b0 76cabd7e8ca55cfddd615adb03b6d81402599f81 Alexander Kune <alexander@kune.de> 1531506836 +0200	pull: Fast-forward
+76cabd7e8ca55cfddd615adb03b6d81402599f81 1f6bc7b9a319725229742c17e99241187cdfcc20 Alexander Kune <alexander@kune.de> 1531506883 +0200	commit: chore: update travis configuration
+1f6bc7b9a319725229742c17e99241187cdfcc20 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507669 +0200	commit: chore: update travis configuration
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507842 +0200	checkout: moving from master to 519831d117b4eaed279295a9151f956d74a4e68b
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507878 +0200	checkout: moving from 519831d117b4eaed279295a9151f956d74a4e68b to master
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507898 +0200	checkout: moving from master to 519831d117b4eaed279295a9151f956d74a4e68b
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507916 +0200	checkout: moving from 519831d117b4eaed279295a9151f956d74a4e68b to master
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507920 +0200	checkout: moving from master to 519831d117b4eaed279295a9151f956d74a4e68b
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531508325 +0200	checkout: moving from 519831d117b4eaed279295a9151f956d74a4e68b to master
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531508342 +0200	checkout: moving from master to feature-something
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531508370 +0200	checkout: moving from feature-something to xyz
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531508386 +0200	checkout: moving from xyz to feature-something
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531508487 +0200	checkout: moving from feature-something to 519831d117b4eaed279295a9151f956d74a4e68b
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531511962 +0200	checkout: moving from 519831d117b4eaed279295a9151f956d74a4e68b to feature-something
+519831d117b4eaed279295a9151f956d74a4e68b 28a739141cc865210c9a224c65bbe34c611bdb83 Alexander Kune <alexander@kune.de> 1531512022 +0200	commit: chore: add feature
+28a739141cc865210c9a224c65bbe34c611bdb83 28a739141cc865210c9a224c65bbe34c611bdb83 Alexander Kune <alexander@kune.de> 1531512035 +0200	checkout: moving from feature-something to 28a7391
+28a739141cc865210c9a224c65bbe34c611bdb83 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531512637 +0200	checkout: moving from 28a739141cc865210c9a224c65bbe34c611bdb83 to master
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531512684 +0200	checkout: moving from master to 519831d117b4eaed279295a9151f956d74a4e68b
+519831d117b4eaed279295a9151f956d74a4e68b 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531512744 +0200	checkout: moving from 519831d117b4eaed279295a9151f956d74a4e68b to master
+519831d117b4eaed279295a9151f956d74a4e68b 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531512829 +0200	commit: chore: update travis configuration
+87690b84b080963516396ff7352768f8f896d637 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531513547 +0200	checkout: moving from master to 87690b84b080963516396ff7352768f8f896d637
+87690b84b080963516396ff7352768f8f896d637 28a739141cc865210c9a224c65bbe34c611bdb83 Alexander Kune <alexander@kune.de> 1531514796 +0200	checkout: moving from 87690b84b080963516396ff7352768f8f896d637 to feature-something
+28a739141cc865210c9a224c65bbe34c611bdb83 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531515005 +0200	checkout: moving from feature-something to master
+87690b84b080963516396ff7352768f8f896d637 28a739141cc865210c9a224c65bbe34c611bdb83 Alexander Kune <alexander@kune.de> 1531515853 +0200	checkout: moving from master to feature-something
+28a739141cc865210c9a224c65bbe34c611bdb83 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531515922 +0200	checkout: moving from feature-something to master
+87690b84b080963516396ff7352768f8f896d637 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531515946 +0200	checkout: moving from master to feature-something-else
+87690b84b080963516396ff7352768f8f896d637 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531516090 +0200	checkout: moving from feature-something-else to master
+87690b84b080963516396ff7352768f8f896d637 a51e6823fc78e5e1eda8b0d9067581f77b56a69b Alexander Kune <alexander@kune.de> 1531516612 +0200	commit: feat: update project model
+a51e6823fc78e5e1eda8b0d9067581f77b56a69b 213f4678fbd087147ce69c4284b813db9075ac0a Alexander Kune <alexander@kune.de> 1531517055 +0200	commit (amend): feat: update project model
