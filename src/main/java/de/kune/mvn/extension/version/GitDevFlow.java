@@ -26,6 +26,7 @@ import static java.lang.String.join;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.regex.Pattern.compile;
+import static java.util.stream.Collectors.toList;
 
 public class GitDevFlow implements VersionExtension {
 
@@ -80,36 +81,7 @@ public class GitDevFlow implements VersionExtension {
                 return UNKNOWN_SNAPSHOT;
             }
             logger.info("Head refs: " + headRefs);
-            String branch = repository.getBranch();
-            String fullBranch = repository.getFullBranch();
-            if (!fullBranch.startsWith("refs/heads/")) {
-                logger.info("GIT repository is detached");
-                List<String> branchCandidates = repository.getAllRefs()
-                        .entrySet()
-                        .stream()
-                        .filter(e -> e.getKey().startsWith("refs/heads/"))
-                        .filter(e -> e.getValue().getObjectId().getName().equals(fullBranch))
-                        .map(e -> e.getKey())
-                        .map(e -> e.replaceAll("^refs/heads/", ""))
-                        .collect(Collectors.toList());
-                if (!branchCandidates.isEmpty()) {
-                    logger.debug("Branch candidates: " + join(", ", branchCandidates));
-                }
-                if (branchCandidates.size() == 1) {
-                    branch = branchCandidates.get(0);
-                    logger.info("Falling back to the only matching branch (" + branch + ")");
-                } else if (branchCandidates.size() > 0) {
-                    Collection<String> releaseBranchCandidates = CollectionUtils.intersection(branchCandidates, releaseBranchNames);
-                    if (!releaseBranchCandidates.isEmpty()) {
-                        branch = releaseBranchCandidates.iterator().next();
-                        logger.info("Found at least one release branch candidate, continuing with " + branch);
-                    } else {
-                        logger.info("No branch candidates found, continuing with " + fullBranch);
-                    }
-                } else {
-                    logger.info("No branch candidates found, continuing with " + fullBranch);
-                }
-            }
+            String branch = determineBranch(logger, repository);
             if (releaseBranchPattern.matcher(branch.toLowerCase()).matches()) {
                 return determineReleaseVersion(logger, repository, branch);
             } else if (hotfixBranchPattern.matcher(branch.toLowerCase()).matches()) {
@@ -125,6 +97,41 @@ public class GitDevFlow implements VersionExtension {
             logger.warn(e.getClass().getSimpleName() + " caught, falling back to " + UNKNOWN_SNAPSHOT, e);
         }
         return UNKNOWN_SNAPSHOT;
+    }
+
+    private static String determineBranch(Logger logger, Repository repository) throws IOException {
+        String branch = repository.getBranch();
+        String fullBranch = repository.getFullBranch();
+        if (!fullBranch.startsWith("refs/heads/")) {
+            logger.info("GIT repository is detached");
+            List<String> branchCandidates = repository.getAllRefs()
+                    .entrySet()
+                    .stream()
+                    .filter(e -> e.getKey().startsWith("refs/heads/"))
+                    .filter(e -> e.getValue().getObjectId().getName().equals(fullBranch))
+                    .map(e -> e.getKey())
+                    .map(e -> e.replaceAll("^refs/heads/", ""))
+                    .collect(toList());
+            if (!branchCandidates.isEmpty()) {
+                logger.debug("Branch candidates: " + join(", ", branchCandidates));
+            }
+            if (branchCandidates.size() == 1) {
+                branch = branchCandidates.get(0);
+                logger.info("Falling back to the only matching branch (" + branch + ")");
+            } else if (branchCandidates.size() > 0) {
+                Collection<String> releaseBranchCandidates = CollectionUtils
+                        .intersection(branchCandidates, releaseBranchNames);
+                if (!releaseBranchCandidates.isEmpty()) {
+                    branch = releaseBranchCandidates.iterator().next();
+                    logger.info("Found at least one release branch candidate, continuing with " + branch);
+                } else {
+                    logger.info("No branch candidates found, continuing with " + fullBranch);
+                }
+            } else {
+                logger.info("No branch candidates found, continuing with " + fullBranch);
+            }
+        }
+        return branch;
     }
 
     private static String determineHotfixVersion(Logger logger, Repository repository, String branch)
@@ -157,14 +164,17 @@ public class GitDevFlow implements VersionExtension {
 
     private static List<Ref> getTags(Repository repository) {
         return repository.getTags().entrySet().stream().map(Map.Entry::getValue).map(repository::peel).collect(
-            Collectors.toList());
+            toList());
     }
 
     private static SemVer determineVersion(Logger logger, List<String> commitMessagesAfterRelease, SemVer baseRelease) {
         Set<String> commitTypes = extractTypes(commitMessagesAfterRelease);
         SemVer newVer = baseRelease == null ? SemVer.initial() : baseRelease;
-        commitMessagesAfterRelease.stream().filter(m->majorIncrementPattern.matcher(m).find()).count();
-        if (commitMessagesAfterRelease.stream().filter(m->majorIncrementPattern.matcher(m).find()).findAny().isPresent()) {
+        commitMessagesAfterRelease.stream().filter(m -> majorIncrementPattern.matcher(m).find()).count();
+        if (commitMessagesAfterRelease.stream()
+                .filter(m -> majorIncrementPattern.matcher(m).find())
+                .findAny()
+                .isPresent()) {
             logger.info("Found major increment pattern(s)");
             newVer = newVer.incrementMajor(1);
         } else if (CollectionUtils.intersection(commitTypes, minorIncrementTypes).size() > 0) {
@@ -215,7 +225,7 @@ public class GitDevFlow implements VersionExtension {
             final RevCommit q = r;
             List<Ref> revTags = tags.stream()
                     .filter(t -> t.getObjectId().equals(q.getId()) || q.getId().equals(t.getPeeledObjectId()))
-                    .collect(Collectors.toList());
+                    .collect(toList());
             logger.debug(
                 "  "
                         + r.getId().getName()
@@ -255,7 +265,7 @@ public class GitDevFlow implements VersionExtension {
             for (final RevCommit q : r) {
                 List<Ref> revTags = tags.stream()
                         .filter(t -> t.getObjectId().equals(q.getId()) || q.getId().equals(t.getPeeledObjectId()))
-                        .collect(Collectors.toList());
+                        .collect(toList());
                 logger.debug(
                     "  "
                             + q.getId().getName()
@@ -279,7 +289,7 @@ public class GitDevFlow implements VersionExtension {
                         e.printStackTrace();
                         return null;
                     }
-                }).collect(Collectors.toList()));
+                }).collect(toList()));
             }
             r = nextParents;
         }
