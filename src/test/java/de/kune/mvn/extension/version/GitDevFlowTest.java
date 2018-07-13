@@ -34,6 +34,10 @@ public class GitDevFlowTest {
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
             new Object[][] {
+                    { "0.0.1", "detached-master" },
+                    { "0.0.1", "detached-feature-branch-and-master" },
+                    { "feature-something-SNAPSHOT", "detached-feature-branch" },
+                    { "519831d117b4eaed279295a9151f956d74a4e68b-SNAPSHOT", "detached-no-branch" },
                     { "unknown-SNAPSHOT", "init-no-branch" },
                     { "0.0.0", "init-no-release" },
                     { "0.0.0", "init-with-release" },

@@ -22,27 +22,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.lang.String.join;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.regex.Pattern.compile;
 
 public class GitDevFlow implements VersionExtension {
 
-    private static final Pattern releaseBranchPattern = compile("master");
+    private static final Set<String> releaseBranchNames = unmodifiableSet(new HashSet<>(asList("master")));
 
-    private static final Pattern hotfixBranchPattern = compile("(?<type>hotfix|support)-(?<base>.*?)");
+    private static final Pattern releaseBranchPattern = compile(join("|", releaseBranchNames));
 
-    private static final Set<String> minorIncrementTypes = unmodifiableSet(new HashSet<String>(Arrays.asList("feat")));
+    private static final Set<String> hotfixBranchPrefixes = unmodifiableSet(new HashSet<>(asList("hotfix", "support")));
+
+    private static final Pattern hotfixBranchPattern = compile(
+        "(?<type>" + join("|", hotfixBranchPrefixes) + ")-(?<base>.*?)");
+
+    private static final Set<String> minorIncrementTypes = unmodifiableSet(new HashSet<String>(asList("feat")));
 
     private static final Set<String> patchIncrementTypes = unmodifiableSet(
-        new HashSet<>(Arrays.asList("fix", "docs", "style", "refactor", "perf", "test", "chore")));
+        new HashSet<>(asList("fix", "docs", "style", "refactor", "perf", "test", "chore")));
 
     private static final String UNKNOWN_SNAPSHOT = "unknown-SNAPSHOT";
 
     private final static Pattern releaseTagPattern = compile("refs/tags/v?(?<version>\\d+\\.\\d+\\.\\d+)");
 
     private final static Pattern hotfixReleaseTagPattern = compile(
-        "refs/tags/v?(.*?\\.(support|hotfix)\\.)?(?<version>\\d+\\.\\d+\\.\\d+)");
+        "refs/tags/v?(.*?\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?(?<version>\\d+\\.\\d+\\.\\d+)");
 
     protected static String determineVersion(Logger logger, File gitDirectory) {
         if (gitDirectory == null || !gitDirectory.exists() || !gitDirectory.isDirectory()) {
@@ -68,13 +74,40 @@ public class GitDevFlow implements VersionExtension {
             logger.info("Working directory (" + gitDirectory + ") is a GIT repository");
             Ref headRefs = repository.getAllRefs().get("HEAD");
             if (headRefs == null) {
-                logger.info(
-                        "No HEAD refs found, falling back to "
-                                + UNKNOWN_SNAPSHOT);
+                logger.info("No HEAD refs found, falling back to " + UNKNOWN_SNAPSHOT);
                 return UNKNOWN_SNAPSHOT;
             }
             logger.info("Head refs: " + headRefs);
             String branch = repository.getBranch();
+            String fullBranch = repository.getFullBranch();
+            if (!fullBranch.startsWith("refs/heads/")) {
+                logger.info("GIT repository is detached");
+                List<String> branchCandidates = repository.getAllRefs()
+                        .entrySet()
+                        .stream()
+                        .filter(e -> e.getKey().startsWith("refs/heads/"))
+                        .filter(e -> e.getValue().getObjectId().getName().equals(fullBranch))
+                        .map(e -> e.getKey())
+                        .map(e -> e.replaceAll("^refs/heads/", ""))
+                        .collect(Collectors.toList());
+                if (!branchCandidates.isEmpty()) {
+                    logger.debug("Branch candidates: " + join(", ", branchCandidates));
+                }
+                if (branchCandidates.size() == 1) {
+                    branch = branchCandidates.get(0);
+                    logger.info("Falling back to the only matching branch (" + branch + ")");
+                } else if (branchCandidates.size() > 0) {
+                    Collection<String> releaseBranchCandidates = CollectionUtils.intersection(branchCandidates, releaseBranchNames);
+                    if (!releaseBranchCandidates.isEmpty()) {
+                        branch = releaseBranchCandidates.iterator().next();
+                        logger.info("Found at least one release branch candidate, continuing with " + branch);
+                    } else {
+                        logger.info("No branch candidates found, continuing with " + fullBranch);
+                    }
+                } else {
+                    logger.info("No branch candidates found, continuing with " + fullBranch);
+                }
+            }
             if (releaseBranchPattern.matcher(branch.toLowerCase()).matches()) {
                 return determineReleaseVersion(logger, repository, branch);
             } else if (hotfixBranchPattern.matcher(branch.toLowerCase()).matches()) {
