@@ -66,6 +66,14 @@ public class GitDevFlow implements VersionExtension {
                 return UNKNOWN_SNAPSHOT;
             }
             logger.info("Working directory (" + gitDirectory + ") is a GIT repository");
+            Ref headRefs = repository.getAllRefs().get("HEAD");
+            if (headRefs == null) {
+                logger.info(
+                        "No HEAD refs found, falling back to "
+                                + UNKNOWN_SNAPSHOT);
+                return UNKNOWN_SNAPSHOT;
+            }
+            logger.info("Head refs: " + headRefs);
             String branch = repository.getBranch();
             if (releaseBranchPattern.matcher(branch.toLowerCase()).matches()) {
                 return determineReleaseVersion(logger, repository, branch);
@@ -106,7 +114,6 @@ public class GitDevFlow implements VersionExtension {
     private static SemVer determineVersion(Logger logger, Repository repository, boolean includeHotfix)
             throws IOException {
         List<Ref> tags = getTags(repository);
-        logger.info("Head refs: " + repository.getAllRefs().get("HEAD"));
         return determineVersion(
             logger,
             directCommitsAfterReleaseTag(logger, repository, tags, includeHotfix),

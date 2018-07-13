@@ -1,15 +1,25 @@
 package de.kune.mvn.extension.version;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
+
+import static org.apache.commons.io.FileUtils.copyDirectory;
+import static org.apache.commons.io.FileUtils.deleteDirectory;
 
 @RunWith(Parameterized.class)
 public class GitDevFlowTest {
@@ -18,18 +28,20 @@ public class GitDevFlowTest {
 
     private final String testcase;
 
+    private File gitTestDir;
+
     @Parameterized.Parameters(name = "{1}")
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
             new Object[][] {
+                    { "unknown-SNAPSHOT", "init-no-branch" },
                     { "0.0.0", "init-no-release" },
                     { "0.0.0", "init-with-release" },
                     { "0.0.1", "init-with-release-and-chore-commit" },
                     { "0.0.1", "init-no-release-and-chore-commit" },
                     { "feat-a-SNAPSHOT", "branch" },
                     { "feat-a-SNAPSHOT", "branch-with-merged-release" },
-                    { "0.1.1", "merged-branch-with-merged-release" }
-            });
+                    { "0.1.1", "merged-branch-with-merged-release" } });
     }
 
     public GitDevFlowTest(String expectedVersion, String testcase) {
@@ -45,29 +57,31 @@ public class GitDevFlowTest {
     private void assertVersion(String s, String testcase) {
         ConsoleLogger logger = new ConsoleLogger();
         logger.setThreshold(Logger.LEVEL_DEBUG);
-        openGit(testcase);
-        try {
-            Assert.assertEquals(
-                s,
-                GitDevFlow.determineVersion(
-                    logger,
-                    new File(GitDevFlowTest.class.getClassLoader().getResource(testcase).getFile())));
-        } finally {
-            closeGit(testcase);
-        }
+        Assert.assertEquals(s, GitDevFlow.determineVersion(logger, gitTestDir));
     }
 
-    private void closeGit(String s) {
-        File file = new File(GitDevFlowTest.class.getClassLoader().getResource(s).getFile());
-        if (file != null && file.isDirectory() && new File(file, ".git").isDirectory()) {
-            new File(file, ".git").renameTo(new File(file, "git"));
-        }
+    @Before
+    public void setUp() throws IOException {
+        Path tmp = Files.createTempDirectory(UUID.randomUUID().toString());
+        File gitTmp = new File(tmp.toFile(), ".git");
+        copyDirectory(gitSource(testcase), gitTmp);
+        gitTestDir = tmp.toFile();
     }
 
-    private void openGit(String s) {
-        File file = new File(GitDevFlowTest.class.getClassLoader().getResource(s).getFile());
-        if (file != null && file.isDirectory() && new File(file, "git").isDirectory()) {
-            new File(file, "git").renameTo(new File(file, ".git"));
-        }
+    @After
+    public void tearDown() throws IOException {
+        deleteDirectory(gitTestDir);
     }
+
+    private static File gitParent(String testcase) {
+        File gitParent = new File(GitDevFlowTest.class.getClassLoader().getResource(testcase).getFile());
+        Assert.assertTrue(gitParent.exists());
+        Assert.assertTrue(gitParent.isDirectory());
+        return gitParent;
+    }
+
+    private static File gitSource(String testcase) {
+        return new File(gitParent(testcase), "git");
+    }
+
 }
