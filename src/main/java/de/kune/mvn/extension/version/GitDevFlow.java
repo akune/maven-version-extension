@@ -48,10 +48,14 @@ public class GitDevFlow implements VersionExtension {
 
     private static final String UNKNOWN_SNAPSHOT = "unknown-SNAPSHOT";
 
-    private final static Pattern releaseTagPattern = compile("refs/tags/v?(?<version>\\d+\\.\\d+\\.\\d+)");
+    public static final String REFS_TAGS = "refs/tags/";
+
+    private final static Pattern releaseTagPattern = compile(REFS_TAGS + SemVer.versionStringPattern.pattern());
 
     private final static Pattern hotfixReleaseTagPattern = compile(
-        "refs/tags/v?(.*?\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?(?<version>\\d+\\.\\d+\\.\\d+)");
+        REFS_TAGS + "v?(.*?\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?" + SemVer.semverPattern);
+
+    public static final String REFS_HEADS = "refs/heads/";
 
     protected static String determineVersion(Logger logger, File gitDirectory) {
         if (gitDirectory == null || !gitDirectory.exists() || !gitDirectory.isDirectory()) {
@@ -102,15 +106,15 @@ public class GitDevFlow implements VersionExtension {
     private static String determineBranch(Logger logger, Repository repository) throws IOException {
         String branch = repository.getBranch();
         String fullBranch = repository.getFullBranch();
-        if (!fullBranch.startsWith("refs/heads/")) {
+        if (!fullBranch.startsWith(REFS_HEADS)) {
             logger.info("GIT repository is detached");
             List<String> branchCandidates = repository.getAllRefs()
                     .entrySet()
                     .stream()
-                    .filter(e -> e.getKey().startsWith("refs/heads/"))
+                    .filter(e -> e.getKey().startsWith(REFS_HEADS))
                     .filter(e -> e.getValue().getObjectId().getName().equals(fullBranch))
                     .map(e -> e.getKey())
-                    .map(e -> e.replaceAll("^refs/heads/", ""))
+                    .map(e -> e.replaceAll("^" + REFS_HEADS, ""))
                     .collect(toList());
             if (!branchCandidates.isEmpty()) {
                 logger.debug("Branch candidates: " + join(", ", branchCandidates));
@@ -323,7 +327,10 @@ public class GitDevFlow implements VersionExtension {
             return of(0, 0, 0);
         }
 
-        private static Pattern versionStringPattern = compile("v?(?<major>\\d+?)\\.(?<minor>\\d+?)\\.(?<patch>\\d+?)");
+        private static final Pattern semverPattern = compile(
+            "(?<version>(?<major>\\d+?)\\.(?<minor>\\d+?)\\.(?<patch>\\d+?))");
+
+        private static final Pattern versionStringPattern = compile("v?" + semverPattern.pattern());
 
         public static SemVer of(String versionString) {
             Matcher matcher = versionStringPattern.matcher(versionString);
@@ -357,15 +364,12 @@ public class GitDevFlow implements VersionExtension {
         }
 
         public String toString() {
-            return getTag();
+            return getVersion();
         }
 
         public String getVersion() {
             return major + "." + minor + "." + patch;
         }
 
-        public String getTag() {
-            return "v" + getVersion();
-        }
     }
 }
