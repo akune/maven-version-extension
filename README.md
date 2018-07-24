@@ -60,7 +60,7 @@ The git-dev-flow version extension determines the version from the current GIT b
 
 pom.xml: 
 ```xml
-<project ...>
+<project>
     <groupId>somegroup</groupId>
     <artifactId>someartifact</artifactId>
     <version>${version-extension[git-dev-flow]}</version>
