@@ -53,7 +53,7 @@ A Maven extension to maintain versions independently from the POM.
 #### GIT branch and commit-based versioning
 The git-dev-flow version extension determines the version from the current GIT branch and commit messages. 
 * building a release branch (currently that's master ) will result in a release version
-   * the version will be determined by inspecting the commits since the latest release tag (see https://github.com/commitizen/cz-cli for a great way to chose useful commit messages)
+   * the version will be determined by inspecting the commits since the latest release tag (see https://conventionalcommits.org for details about structuring commit messages and https://github.com/commitizen/cz-cli for a great GIT CLI integration)
 * building a feature branch (named feature-something) will result in a SNAPSHOT version (i.e. feature-something-SNAPSHOT)
 * building a support or hotfix branch (named hotfix-0.3.0 or support-whatever) will result in a hotfix release version
    * the version will be determined similarly to building a release branch but the base name (the part of the branch name after support- or hotfix-) will be maintained in the version like this 0.3.0.hotfix.0.3.1 or whatever.hotfix.0.8.9
