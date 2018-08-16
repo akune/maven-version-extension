@@ -1,0 +1,23 @@
+<settings>
+    <profiles>
+        <profile>
+            <id>jitpack</id>
+            <repositories>
+                <repository>
+                    <id>jitpack.io</id>
+                    <url>https://jitpack.io</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>jitpack.io</id>
+                    <url>https://jitpack.io</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>jitpack</activeProfile>
+    </activeProfiles>
+</settings>
