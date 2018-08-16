@@ -28,8 +28,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/akune/maven-version-extension.git</connection>
-        <developerConnection>scm:git:ssh://github.com:akune/maven-version-extension.git</developerConnection>
+        <connection>scm:git:ssh://git@github.com/akune/maven-version-extension.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/akune/maven-version-extension.git</developerConnection>
         <url>http://github.com/akune/maven-version-extension/tree/master</url>
     </scm>
 

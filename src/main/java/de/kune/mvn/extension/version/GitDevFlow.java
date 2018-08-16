@@ -9,6 +9,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.CollectionUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -85,6 +86,14 @@ public class GitDevFlow implements VersionExtension {
                 return UNKNOWN_SNAPSHOT;
             }
             logger.info("Head refs: " + headRefs);
+
+            List<Ref> tags = getTags(repository);
+            Optional<SemVer> taggedSemVer = determineTaggedSemVer(tags, headRefs.getObjectId());
+            if (taggedSemVer.isPresent()) {
+                logger.info("No commit since last release tag " + taggedSemVer.get());
+                return taggedSemVer.get().getVersion();
+            }
+
             String branch = determineBranch(logger, repository);
             if (releaseBranchPattern.matcher(branch.toLowerCase()).matches()) {
                 return determineReleaseVersion(logger, repository, branch);
@@ -101,6 +110,21 @@ public class GitDevFlow implements VersionExtension {
             logger.warn(e.getClass().getSimpleName() + " caught, falling back to " + UNKNOWN_SNAPSHOT, e);
         }
         return UNKNOWN_SNAPSHOT;
+    }
+
+    private static Optional<SemVer> determineTaggedSemVer(List<Ref> tags, ObjectId objectId) {
+        return tags.stream()
+                .filter(
+                        t -> t.getObjectId().equals(objectId)
+                                || objectId.equals(t.getPeeledObjectId()))
+                .map(t -> {
+                    Matcher m = releaseTagPattern.matcher(t.getName());
+                    return m.matches() ? m.group("version") : null;
+                })
+                .filter(v -> v != null)
+                .map(v -> SemVer.of((String) v))
+                .sorted(SemVer.SEM_VER_COMPARATOR.reversed())
+                .findFirst();
     }
 
     private static String determineBranch(Logger logger, Repository repository) throws IOException {
@@ -319,6 +343,10 @@ public class GitDevFlow implements VersionExtension {
 
     private static class SemVer {
 
+        public static final Comparator<SemVer> SEM_VER_COMPARATOR = Comparator.comparingInt(SemVer::getMajor)
+                .thenComparingInt(SemVer::getMinor)
+                .thenComparingInt(SemVer::getPatch);
+
         public static SemVer of(int major, int minor, int patch) {
             return new SemVer(major, minor, patch);
         }
@@ -349,6 +377,18 @@ public class GitDevFlow implements VersionExtension {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
+        }
+
+        public int getMajor() {
+            return major;
+        }
+
+        public int getMinor() {
+            return minor;
+        }
+
+        public int getPatch() {
+            return patch;
         }
 
         public SemVer incrementPatch(int increment) {
