@@ -9,7 +9,6 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.CollectionUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -88,10 +87,10 @@ public class GitDevFlow implements VersionExtension {
             logger.info("Head refs: " + headRefs);
 
             List<Ref> tags = getTags(repository);
-            Optional<SemVer> taggedSemVer = determineTaggedSemVer(tags, headRefs.getObjectId());
-            if (taggedSemVer.isPresent()) {
-                logger.info("No commit since last release tag " + taggedSemVer.get());
-                return taggedSemVer.get().getVersion();
+            Optional<String> taggedVersion = determineTaggedVersion(tags, headRefs.getObjectId().toString());
+            if (taggedVersion.isPresent()) {
+                logger.info("No commit since last release tag " + taggedVersion.get());
+                return taggedVersion.get();
             }
 
             String branch = determineBranch(logger, repository);
@@ -112,11 +111,11 @@ public class GitDevFlow implements VersionExtension {
         return UNKNOWN_SNAPSHOT;
     }
 
-    private static Optional<SemVer> determineTaggedSemVer(List<Ref> tags, ObjectId objectId) {
+    private static Optional<String> determineTaggedVersion(List<Ref> tags, String commitId) {
         return tags.stream()
                 .filter(
-                        t -> t.getObjectId().equals(objectId)
-                                || objectId.equals(t.getPeeledObjectId()))
+                    t -> t.getObjectId().toString().equals(commitId)
+                            || t.getPeeledObjectId() != null && commitId.equals(t.getPeeledObjectId().toString()))
                 .map(t -> {
                     Matcher m = releaseTagPattern.matcher(t.getName());
                     return m.matches() ? m.group("version") : null;
@@ -124,6 +123,7 @@ public class GitDevFlow implements VersionExtension {
                 .filter(v -> v != null)
                 .map(v -> SemVer.of((String) v))
                 .sorted(SemVer.SEM_VER_COMPARATOR.reversed())
+                .map(v -> v.getVersion())
                 .findFirst();
     }
 
@@ -250,6 +250,7 @@ public class GitDevFlow implements VersionExtension {
         RevCommit r = head;
         List<String> result = new ArrayList<>();
         while (r != null) {
+            logger.warn(determineTaggedVersion(tags, r.getId().toString()).orElse("Nothing determined..."));
             final RevCommit q = r;
             List<Ref> revTags = tags.stream()
                     .filter(t -> t.getObjectId().equals(q.getId()) || q.getId().equals(t.getPeeledObjectId()))
