@@ -18,6 +18,8 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,14 +39,14 @@ public class GitDevFlow implements VersionExtension {
     private static final Set<String> hotfixBranchPrefixes = unmodifiableSet(new HashSet<>(asList("hotfix", "support")));
 
     private static final Pattern hotfixBranchPattern = compile(
-        "(?<type>" + join("|", hotfixBranchPrefixes) + ")-(?<base>.*?)");
+            "(?<type>" + join("|", hotfixBranchPrefixes) + ")-(?<base>.*?)");
 
     private static final Pattern majorIncrementPattern = Pattern.compile("(^|\\n)BREAKING CHANGE:?.*$");
 
     private static final Set<String> minorIncrementTypes = unmodifiableSet(new HashSet<String>(asList("feat")));
 
     private static final Set<String> patchIncrementTypes = unmodifiableSet(
-        new HashSet<>(asList("fix", "docs", "style", "refactor", "perf", "test", "chore")));
+            new HashSet<>(asList("fix", "docs", "style", "refactor", "perf", "test", "chore")));
 
     private static final String UNKNOWN_SNAPSHOT = "unknown-SNAPSHOT";
 
@@ -53,17 +55,35 @@ public class GitDevFlow implements VersionExtension {
     private final static Pattern releaseTagPattern = compile(REFS_TAGS + SemVer.versionStringPattern.pattern());
 
     private final static Pattern hotfixReleaseTagPattern = compile(
-        REFS_TAGS + "v?(.*?\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?" + SemVer.semverPattern);
+            REFS_TAGS + "v?(.*?\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?" + SemVer.semverPattern);
 
     public static final String REFS_HEADS = "refs/heads/";
 
+    private static final ConcurrentMap<String, Optional<String>> versionsCache = new ConcurrentHashMap<>();
+
+    private static Optional<Repository> determineRepository(File gitDirectory) {
+        if (gitDirectory == null || !gitDirectory.exists() || !gitDirectory.isDirectory()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.ofNullable(new FileRepositoryBuilder().findGitDir(gitDirectory).build());
+        } catch (IOException | IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
     protected static String determineVersion(Logger logger, File gitDirectory) {
+        String key = determineRepository(gitDirectory).map(Object::toString).orElse(gitDirectory == null ? null : gitDirectory.toString());
+        return versionsCache.computeIfAbsent(key, d -> Optional.ofNullable(doDetermineVersion(logger, gitDirectory))).orElse(null);
+    }
+
+    private static String doDetermineVersion(Logger logger, File gitDirectory) {
         if (gitDirectory == null || !gitDirectory.exists() || !gitDirectory.isDirectory()) {
             logger.info(
-                "Working directory ("
-                        + gitDirectory
-                        + ") does not exist or is not a directory, falling back to "
-                        + UNKNOWN_SNAPSHOT);
+                    "Working directory ("
+                            + gitDirectory
+                            + ") does not exist or is not a directory, falling back to "
+                            + UNKNOWN_SNAPSHOT);
             return UNKNOWN_SNAPSHOT;
         }
         try {
@@ -72,13 +92,13 @@ public class GitDevFlow implements VersionExtension {
                 repository = new FileRepositoryBuilder().findGitDir(gitDirectory).build();
             } catch (IllegalArgumentException e) {
                 logger.info(
-                    "Working directory ("
-                            + gitDirectory
-                            + ") is not a GIT repository, falling back to "
-                            + UNKNOWN_SNAPSHOT);
+                        "Working directory ("
+                                + gitDirectory
+                                + ") is not a GIT repository, falling back to "
+                                + UNKNOWN_SNAPSHOT);
                 return UNKNOWN_SNAPSHOT;
             }
-            logger.info("Working directory (" + gitDirectory + ") is a GIT repository");
+            logger.info("Working directory (" + gitDirectory + ") is a GIT repository: " + repository);
             Ref headRefs = repository.getAllRefs().get("HEAD");
             if (headRefs == null) {
                 logger.info("No HEAD refs found, falling back to " + UNKNOWN_SNAPSHOT);
@@ -100,7 +120,7 @@ public class GitDevFlow implements VersionExtension {
                 return determineHotfixVersion(logger, repository, branch);
             } else {
                 logger.info(
-                    "Current branch (" + branch + ") is not a release branch, falling back to " + branch + "-SNAPSHOT");
+                        "Current branch (" + branch + ") is not a release branch, falling back to " + branch + "-SNAPSHOT");
                 return branch + "-SNAPSHOT";
             }
         } catch (IOException e) {
@@ -114,8 +134,8 @@ public class GitDevFlow implements VersionExtension {
     private static Optional<String> determineTaggedVersion(List<Ref> tags, String commitId) {
         return tags.stream()
                 .filter(
-                    t -> t.getObjectId().toString().equals(commitId)
-                            || t.getPeeledObjectId() != null && commitId.equals(t.getPeeledObjectId().toString()))
+                        t -> t.getObjectId().toString().equals(commitId)
+                                || t.getPeeledObjectId() != null && commitId.equals(t.getPeeledObjectId().toString()))
                 .map(t -> {
                     Matcher m = releaseTagPattern.matcher(t.getName());
                     return m.matches() ? m.group("version") : null;
@@ -185,14 +205,14 @@ public class GitDevFlow implements VersionExtension {
             throws IOException {
         List<Ref> tags = getTags(repository);
         return determineVersion(
-            logger,
-            directCommitsAfterReleaseTag(logger, repository, tags, includeHotfix),
-            latestReachableReleaseTag(logger, repository, tags, includeHotfix));
+                logger,
+                directCommitsAfterReleaseTag(logger, repository, tags, includeHotfix),
+                latestReachableReleaseTag(logger, repository, tags, includeHotfix));
     }
 
     private static List<Ref> getTags(Repository repository) {
         return repository.getTags().entrySet().stream().map(Map.Entry::getValue).map(repository::peel).collect(
-            toList());
+                toList());
     }
 
     private static SemVer determineVersion(Logger logger, List<String> commitMessagesAfterRelease, SemVer baseRelease) {
@@ -226,17 +246,17 @@ public class GitDevFlow implements VersionExtension {
                 .collect(Collectors.toSet());
     }
 
-    public static void main(String[] args) throws IOException, GitAPIException {
-        Logger logger = new ConsoleLogger();
-        logger.setThreshold(Logger.LEVEL_DEBUG);
-        System.out.println(determineVersion(logger, new File("/Users/alexander/")));
-        System.out.println(determineVersion(logger, new File("/Users/alexander/Development/git-branches-test")));
-        System.out.println(
-            determineVersion(
-                logger,
-                new File(
-                        "/Users/alexander/Documents/Business/Deposit-Solutions/Workspaces/Deposit-Solutions/ds-comonea-compliance-reporting")));
-    }
+//    public static void main(String[] args) throws IOException, GitAPIException {
+//        Logger logger = new ConsoleLogger();
+//        logger.setThreshold(Logger.LEVEL_DEBUG);
+//        System.out.println(determineVersion(logger, new File("/Users/alexander/")));
+//        System.out.println(determineVersion(logger, new File("/Users/alexander/Development/git-branches-test")));
+//        System.out.println(
+//            determineVersion(
+//                logger,
+//                new File(
+//                        "/Users/alexander/Documents/Business/Deposit-Solutions/Workspaces/Deposit-Solutions/ds-comonea-compliance-reporting")));
+//    }
 
     private static List<String> directCommitsAfterReleaseTag(
             Logger logger,
@@ -250,20 +270,20 @@ public class GitDevFlow implements VersionExtension {
         RevCommit r = head;
         List<String> result = new ArrayList<>();
         while (r != null) {
-            logger.warn(determineTaggedVersion(tags, r.getId().toString()).orElse("Nothing determined..."));
+            logger.debug(determineTaggedVersion(tags, r.getId().toString()).orElse("Nothing determined..."));
             final RevCommit q = r;
             List<Ref> revTags = tags.stream()
                     .filter(t -> t.getObjectId().equals(q.getId()) || q.getId().equals(t.getPeeledObjectId()))
                     .collect(toList());
             logger.debug(
-                "  "
-                        + r.getId().getName()
-                        + " "
-                        + r.getShortMessage()
-                        + " (parents: "
-                        + r.getParentCount()
-                        + ") tags="
-                        + revTags);
+                    "  "
+                            + r.getId().getName()
+                            + " "
+                            + r.getShortMessage()
+                            + " (parents: "
+                            + r.getParentCount()
+                            + ") tags="
+                            + revTags);
             Pattern pattern = includeHotFix ? hotfixReleaseTagPattern : releaseTagPattern;
             if (revTags.stream().filter(t -> pattern.matcher(t.getName()).matches()).count() > 0) {
                 logger.debug("Stopping at tag(s) " + revTags);
@@ -296,14 +316,14 @@ public class GitDevFlow implements VersionExtension {
                         .filter(t -> t.getObjectId().equals(q.getId()) || q.getId().equals(t.getPeeledObjectId()))
                         .collect(toList());
                 logger.debug(
-                    "  "
-                            + q.getId().getName()
-                            + " "
-                            + q.getShortMessage()
-                            + " parents: "
-                            + q.getParentCount()
-                            + " "
-                            + revTags);
+                        "  "
+                                + q.getId().getName()
+                                + " "
+                                + q.getShortMessage()
+                                + " parents: "
+                                + q.getParentCount()
+                                + " "
+                                + revTags);
                 Pattern pattern = includeHotFix ? hotfixReleaseTagPattern : releaseTagPattern;
                 if (revTags.stream().filter(t -> pattern.matcher(t.getName()).matches()).count() > 0) {
                     logger.debug("Stopping at tag(s) " + revTags);
@@ -357,7 +377,7 @@ public class GitDevFlow implements VersionExtension {
         }
 
         private static final Pattern semverPattern = compile(
-            "(?<version>(?<major>\\d+?)\\.(?<minor>\\d+?)\\.(?<patch>\\d+?))");
+                "(?<version>(?<major>\\d+?)\\.(?<minor>\\d+?)\\.(?<patch>\\d+?))");
 
         private static final Pattern versionStringPattern = compile("v?" + semverPattern.pattern());
 
@@ -365,9 +385,9 @@ public class GitDevFlow implements VersionExtension {
             Matcher matcher = versionStringPattern.matcher(versionString);
             if (matcher.matches()) {
                 return of(
-                    Integer.parseInt(matcher.group("major")),
-                    Integer.parseInt(matcher.group("minor")),
-                    Integer.parseInt(matcher.group("patch")));
+                        Integer.parseInt(matcher.group("major")),
+                        Integer.parseInt(matcher.group("minor")),
+                        Integer.parseInt(matcher.group("patch")));
             }
             throw new IllegalArgumentException(versionString + " does not match " + versionStringPattern);
         }
