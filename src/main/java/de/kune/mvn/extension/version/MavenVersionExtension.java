@@ -2,6 +2,8 @@ package de.kune.mvn.extension.version;
 
 import com.google.inject.Key;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.DefaultModelProcessor;
@@ -80,6 +82,8 @@ public class MavenVersionExtension extends DefaultModelProcessor {
         VersionMapper versionMapper = new VersionMapper(logger, model, mavenSession, options);
         model.setVersion(of(model).map(Model::getVersion).map(versionMapper::mapVersion).orElse(null));
         ofNullable(model.getParent()).ifPresent(p->enhance(p, versionMapper, options));
+        Optional.ofNullable(model.getDependencyManagement()).map(DependencyManagement::getDependencies).ifPresent(c -> c.stream().forEach(d -> d.setVersion(of(d).map(Dependency::getVersion).map(versionMapper::mapVersion).orElse(null))));
+        Optional.ofNullable(model.getDependencies()).ifPresent(c -> c.stream().forEach(d -> d.setVersion(of(d).map(Dependency::getVersion).map(versionMapper::mapVersion).orElse(null))));
         String current = model.toString();
         if (!current.equals(previous)) {
             logger.info("Enhanced version: " + model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion());
@@ -95,7 +99,7 @@ public class MavenVersionExtension extends DefaultModelProcessor {
 
     private static final String EXTENSION_GROUP = "extension";
 
-    private static final String VERSION_EXTENSION_REGEX = "\\$\\{"
+    private static final String VERSION_EXTENSION_REGEX = "[\\$\\#]\\{"
             + quote(VERSION_EXTENSION_KEY)
             + "\\[(?<"
             + EXTENSION_GROUP
@@ -125,6 +129,9 @@ public class MavenVersionExtension extends DefaultModelProcessor {
         }
 
         private String mapVersion(String s) {
+            if (s == null) {
+                return null;
+            }
             Matcher matcher = VERSION_EXTENSION_PATTERN.matcher(s);
             if (matcher.find()) {
                 String extensionName = matcher.group(EXTENSION_GROUP);
