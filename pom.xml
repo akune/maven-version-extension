@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.kune</groupId>
     <artifactId>maven-version-extension</artifactId>
-    <version>${version-extension[git-dev-flow]}</version>
+    <version>#{version-extension[git-dev-flow]}</version>
     <name>maven-version-extension</name>
     <description>Allows to externalize versions</description>
     <packaging>jar</packaging>
