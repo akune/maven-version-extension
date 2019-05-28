@@ -5,10 +5,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.building.FileModelSource;
 import org.apache.maven.model.building.ModelProcessor;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.CollectionUtils;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -123,9 +120,6 @@ public class GitDevFlow implements VersionExtension {
                 logger.info("Current branch (" + branch + ") is a snapshot branch");
                 return branch + "-SNAPSHOT";
             } else {
-//                if (isHeadReleaseTag(logger, repository)) {
-//                    return latestReachableReleaseTag(logger, repository, getTags(repository), true).getVersion();
-//                }
                 logger.info(
                         "Current branch (" + branch + ") is not a release branch, falling back to " + branch + "-SNAPSHOT");
                 return branch + "-SNAPSHOT";
@@ -136,12 +130,6 @@ public class GitDevFlow implements VersionExtension {
             logger.warn(e.getClass().getSimpleName() + " caught, falling back to " + UNKNOWN_SNAPSHOT, e);
         }
         return UNKNOWN_SNAPSHOT;
-    }
-
-    private static boolean isHeadReleaseTag(Logger logger, Repository repository) {
-
-        // TODO: determine if commit is tagged as release
-        return false;
     }
 
     private static boolean isSnapshotBranch(Logger logger, Repository repository, String branch) {
@@ -251,6 +239,12 @@ public class GitDevFlow implements VersionExtension {
             newVer = newVer.incrementPatch(1);
         } else {
             logger.info("No increment type(s) found");
+            if (!commitMessagesAfterRelease.isEmpty()) {
+                if (baseRelease != null) {
+                    logger.info("Found " + commitMessagesAfterRelease.size() + " unspecified commits after release, incrementing patch");
+                    newVer = newVer.incrementPatch(1);
+                }
+            }
         }
         logger.debug("Base version bump: " + baseRelease + " -> " + newVer.getVersion());
         return newVer;
@@ -263,18 +257,6 @@ public class GitDevFlow implements VersionExtension {
                 .map(m -> m.toLowerCase())
                 .collect(Collectors.toSet());
     }
-
-//    public static void main(String[] args) throws IOException, GitAPIException {
-//        Logger logger = new ConsoleLogger();
-//        logger.setThreshold(Logger.LEVEL_DEBUG);
-//        System.out.println(determineVersion(logger, new File("/Users/alexander/")));
-//        System.out.println(determineVersion(logger, new File("/Users/alexander/Development/git-branches-test")));
-//        System.out.println(
-//            determineVersion(
-//                logger,
-//                new File(
-//                        "/Users/alexander/Documents/Business/Deposit-Solutions/Workspaces/Deposit-Solutions/ds-comonea-compliance-reporting")));
-//    }
 
     private static List<String> directCommitsAfterReleaseTag(
             Logger logger,

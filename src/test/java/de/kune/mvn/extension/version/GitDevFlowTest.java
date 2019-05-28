@@ -43,6 +43,7 @@ public class GitDevFlowTest {
                     { "0.0.0", "init-no-release" },
                     { "0.0.0", "init-with-release" },
                     { "0.0.1", "init-with-release-and-chore-commit" },
+                    { "0.0.1", "init-with-release-and-unspecified-commit" },
                     { "0.0.1", "init-no-release-and-chore-commit" },
                     { "feat-a-SNAPSHOT", "branch" },
                     { "feat-a-SNAPSHOT", "branch-with-merged-release" },
