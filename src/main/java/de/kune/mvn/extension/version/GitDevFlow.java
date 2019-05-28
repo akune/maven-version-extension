@@ -7,6 +7,7 @@ import org.apache.maven.model.building.ModelProcessor;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.CollectionUtils;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
@@ -55,7 +56,7 @@ public class GitDevFlow implements VersionExtension {
     private final static Pattern releaseTagPattern = compile(REFS_TAGS + SemVer.versionStringPattern.pattern());
 
     private final static Pattern hotfixReleaseTagPattern = compile(
-            REFS_TAGS + "v?(.*?\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?" + SemVer.semverPattern);
+            REFS_TAGS + SemVer.hotfixVersionStringPattern.pattern());
 
     public static final String REFS_HEADS = "refs/heads/";
 
@@ -118,7 +119,13 @@ public class GitDevFlow implements VersionExtension {
                 return determineReleaseVersion(logger, repository, branch);
             } else if (hotfixBranchPattern.matcher(branch.toLowerCase()).matches()) {
                 return determineHotfixVersion(logger, repository, branch);
+            } else if (isSnapshotBranch(logger, repository, branch)) {
+                logger.info("Current branch (" + branch + ") is a snapshot branch");
+                return branch + "-SNAPSHOT";
             } else {
+//                if (isHeadReleaseTag(logger, repository)) {
+//                    return latestReachableReleaseTag(logger, repository, getTags(repository), true).getVersion();
+//                }
                 logger.info(
                         "Current branch (" + branch + ") is not a release branch, falling back to " + branch + "-SNAPSHOT");
                 return branch + "-SNAPSHOT";
@@ -131,6 +138,16 @@ public class GitDevFlow implements VersionExtension {
         return UNKNOWN_SNAPSHOT;
     }
 
+    private static boolean isHeadReleaseTag(Logger logger, Repository repository) {
+
+        // TODO: determine if commit is tagged as release
+        return false;
+    }
+
+    private static boolean isSnapshotBranch(Logger logger, Repository repository, String branch) {
+        return branch.matches("(feature|release|hotfix|bugfix)\\-.*");
+    }
+
     private static Optional<String> determineTaggedVersion(List<Ref> tags, String commitId) {
         return tags.stream()
                 .filter(
@@ -138,7 +155,8 @@ public class GitDevFlow implements VersionExtension {
                                 || t.getPeeledObjectId() != null && commitId.equals(t.getPeeledObjectId().toString()))
                 .map(t -> {
                     Matcher m = releaseTagPattern.matcher(t.getName());
-                    return m.matches() ? m.group("version") : null;
+                    Matcher h = hotfixReleaseTagPattern.matcher(t.getName());
+                    return m.matches() ? m.group("version") : h.matches() ? h.group("base") + h.group("version") : null;
                 })
                 .filter(v -> v != null)
                 .map(v -> SemVer.of((String) v))
@@ -368,6 +386,10 @@ public class GitDevFlow implements VersionExtension {
                 .thenComparingInt(SemVer::getMinor)
                 .thenComparingInt(SemVer::getPatch);
 
+        public static SemVer of(String base, int major, int minor, int patch) {
+            return new SemVer(base, major, minor, patch);
+        }
+
         public static SemVer of(int major, int minor, int patch) {
             return new SemVer(major, minor, patch);
         }
@@ -379,26 +401,48 @@ public class GitDevFlow implements VersionExtension {
         private static final Pattern semverPattern = compile(
                 "(?<version>(?<major>\\d+?)\\.(?<minor>\\d+?)\\.(?<patch>\\d+?))");
 
+        private static final Pattern semverHotfixPattern = compile(
+                "(?<base>(.*?)\\.(" + join("|", hotfixBranchPrefixes) + ")\\.)?" + SemVer.semverPattern);
+
         private static final Pattern versionStringPattern = compile("v?" + semverPattern.pattern());
+        private static final Pattern hotfixVersionStringPattern = compile("v?" + semverHotfixPattern.pattern());
 
         public static SemVer of(String versionString) {
             Matcher matcher = versionStringPattern.matcher(versionString);
+            Matcher hotfixMatcher = hotfixVersionStringPattern.matcher(versionString);
             if (matcher.matches()) {
                 return of(
                         Integer.parseInt(matcher.group("major")),
                         Integer.parseInt(matcher.group("minor")),
                         Integer.parseInt(matcher.group("patch")));
+            } else if (hotfixMatcher.matches()) {
+                return of (hotfixMatcher.group("base"),
+                        Integer.parseInt(hotfixMatcher.group("major")),
+                        Integer.parseInt(hotfixMatcher.group("minor")),
+                        Integer.parseInt(hotfixMatcher.group("patch")));
             }
             throw new IllegalArgumentException(versionString + " does not match " + versionStringPattern);
         }
 
+        private final String base;
         private final int major, minor, patch;
 
-        private SemVer(int major, int minor, int patch) {
+        private SemVer(String base, int major, int minor, int patch) {
+            this.base = base;
             this.major = major;
             this.minor = minor;
             this.patch = patch;
         }
+
+        private SemVer(int major, int minor, int patch) {
+            this(null, major, minor, patch);
+        }
+
+        public boolean isHotfixRelease() {
+            return base != null;
+        }
+
+        public String getBase() { return base; }
 
         public int getMajor() {
             return major;
@@ -429,7 +473,7 @@ public class GitDevFlow implements VersionExtension {
         }
 
         public String getVersion() {
-            return major + "." + minor + "." + patch;
+            return (base != null ? base : "") + major + "." + minor + "." + patch;
         }
 
     }

@@ -46,7 +46,9 @@ public class GitDevFlowTest {
                     { "0.0.1", "init-no-release-and-chore-commit" },
                     { "feat-a-SNAPSHOT", "branch" },
                     { "feat-a-SNAPSHOT", "branch-with-merged-release" },
-                    { "0.1.1", "merged-branch-with-merged-release" } });
+                    { "0.1.1", "merged-branch-with-merged-release" },
+                    { "0.1.0", "detached-master-tagged" },
+                    { "0.43.0.support.0.43.13", "detached-master-support-tagged" }});
     }
 
     public GitDevFlowTest(String expectedVersion, String testcase) {
