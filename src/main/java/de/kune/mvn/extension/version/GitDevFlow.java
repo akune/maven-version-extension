@@ -327,9 +327,12 @@ public class GitDevFlow implements VersionExtension {
                 Pattern pattern = includeHotFix ? hotfixReleaseTagPattern : releaseTagPattern;
                 if (revTags.stream().filter(t -> pattern.matcher(t.getName()).matches()).count() > 0) {
                     logger.debug("Stopping at tag(s) " + revTags);
-                    Matcher matcher = pattern.matcher(revTags.get(0).getName());
-                    matcher.matches();
-                    return SemVer.of(matcher.group("version"));
+                    for (Ref revTag: revTags) {
+                        Matcher matcher = pattern.matcher(revTag.getName());
+                        if (matcher.matches()) {
+                            return SemVer.of(matcher.group("version"));
+                        }
+                    }
                 }
                 nextParents.addAll(asList(q.getParents()).stream().map(x -> {
                     try {
