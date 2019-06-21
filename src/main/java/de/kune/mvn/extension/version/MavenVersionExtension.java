@@ -107,6 +107,8 @@ public class MavenVersionExtension extends DefaultModelProcessor {
 
     private static final Pattern VERSION_EXTENSION_PATTERN = Pattern.compile(VERSION_EXTENSION_REGEX);
 
+    private static final VersionExtension DEFAULT_VERSION_EXTENSION = new GitDevFlow();
+
     private static final Map<String, Class<? extends VersionExtension>> VERSION_EXTENSIONS;
 
     static {
@@ -140,7 +142,7 @@ public class MavenVersionExtension extends DefaultModelProcessor {
                         .orElseGet(() -> versionExtension(extensionName));
                 return matcher.replaceAll(extension.determineVersion(logger, model, mavenSession, options));
             } else {
-                return s;
+                return DEFAULT_VERSION_EXTENSION.determineVersion(logger, model, mavenSession, options);
             }
         }
 
