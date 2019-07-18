@@ -1,0 +1,5 @@
+d0669a03c103ce2d56dae596f79f5ae3eed16f9f		branch 'master' of git.prod.infra.deposit:product-banks/reporting/quality-control
+6c8eefe20a7bdd214ca43e78ec84a2cb9503561d	not-for-merge	branch 'feature-change-response-entities' of git.prod.infra.deposit:product-banks/reporting/quality-control
+cc90eb608b9c6bd799a829ede7df8110078f152e	not-for-merge	branch 'feature-prb-1041_add_unit_and_service_tests' of git.prod.infra.deposit:product-banks/reporting/quality-control
+53f2ece4eac21e0a7d7e3b63fca001ad8b40d5ea	not-for-merge	branch 'production' of git.prod.infra.deposit:product-banks/reporting/quality-control
+74a4d2b62551dc57054da11f63b557a1063ad83b	not-for-merge	branch 'release-candidate' of git.prod.infra.deposit:product-banks/reporting/quality-control

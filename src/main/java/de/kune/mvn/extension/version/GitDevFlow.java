@@ -308,9 +308,10 @@ public class GitDevFlow implements VersionExtension {
         logger.debug("All commits (all parents): ");
         RevWalk revWalk = new RevWalk(repository);
         RevCommit head = revWalk.parseCommit(repository.findRef(Constants.HEAD).getObjectId());
-        List<RevCommit> r = asList(head);
+        Set<RevCommit> r = new LinkedHashSet<>(asList(head));
+        Set<RevCommit> processed = new LinkedHashSet<>();
         while (!r.isEmpty()) {
-            List<RevCommit> nextParents = new ArrayList<>();
+            Set<RevCommit> nextParents = new LinkedHashSet<>();
             for (final RevCommit q : r) {
                 List<Ref> revTags = tags.stream()
                         .filter(t -> t.getObjectId().equals(q.getId()) || q.getId().equals(t.getPeeledObjectId()))
@@ -343,6 +344,8 @@ public class GitDevFlow implements VersionExtension {
                     }
                 }).collect(toList()));
             }
+            nextParents.removeAll(processed);
+            processed.addAll(r);
             r = nextParents;
         }
         return null;

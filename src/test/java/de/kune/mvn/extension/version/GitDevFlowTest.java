@@ -33,6 +33,7 @@ public class GitDevFlowTest {
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
             new Object[][] {
+                    { "0.1.0", "oom" },
                     { "0.1.2", "detached-release-tag" },
                     { "0.0.1", "detached-master" },
                     { "1.0.0", "master-with-breaking-change" },

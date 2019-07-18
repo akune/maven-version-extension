@@ -1,0 +1,11 @@
+0000000000000000000000000000000000000000 153c90379577db70926347d055769e91851823b7 Alexander Kune <alexander@kune.de> 1563437345 +0200	clone: from git@git.prod.infra.deposit:product-banks/reporting/quality-control.git
+153c90379577db70926347d055769e91851823b7 153c90379577db70926347d055769e91851823b7 Alexander Kune <alexander@kune.de> 1563437440 +0200	checkout: moving from release-candidate to feature-adapt-deployment-process
+153c90379577db70926347d055769e91851823b7 495715268e5950b3fcd39ae69221ca76c0d58e6f Alexander Kune <alexander@kune.de> 1563438446 +0200	commit: chore: adapt deployment process
+495715268e5950b3fcd39ae69221ca76c0d58e6f 04c18fd03f6eb163c96dcc9e24c84dedd5d416c2 Alexander Kune <alexander@kune.de> 1563438612 +0200	commit: chore: use default image maven:3.5.4-jdk-8
+04c18fd03f6eb163c96dcc9e24c84dedd5d416c2 50da2010c6c268f46e1ad9881efaa0bd82054e05 Alexander Kune <alexander@kune.de> 1563438841 +0200	commit: chore: enable mvn version extension
+50da2010c6c268f46e1ad9881efaa0bd82054e05 4c1854673301262b6e0092750a9f9c376428320b Alexander Kune <alexander@kune.de> 1563439182 +0200	commit: chore: use maven:3.6.0-jdk-8-alpine for integration testing
+4c1854673301262b6e0092750a9f9c376428320b 9fd8897e952adf38e805ffaef966b7c3d86fdc1e Alexander Kune <alexander@kune.de> 1563440026 +0200	commit: chore: use specific surefire plugin version
+9fd8897e952adf38e805ffaef966b7c3d86fdc1e ff9750b05af2946bd34e3d3a4d26b55d856cf701 Alexander Kune <alexander@kune.de> 1563440690 +0200	commit: chore: use fabric8 docker maven plugin
+ff9750b05af2946bd34e3d3a4d26b55d856cf701 27022a8b4a3ec20fe1893dfeb3043ae8363bb40d Alexander Kune <alexander@kune.de> 1563441089 +0200	commit: chore: add distribution management information
+27022a8b4a3ec20fe1893dfeb3043ae8363bb40d 9dff422449d0315986581b5c295e7bc4d3833653 Alexander Kune <alexander@kune.de> 1563443623 +0200	checkout: moving from feature-adapt-deployment-process to master
+9dff422449d0315986581b5c295e7bc4d3833653 d0669a03c103ce2d56dae596f79f5ae3eed16f9f Alexander Kune <alexander@kune.de> 1563443625 +0200	pull: Fast-forward
