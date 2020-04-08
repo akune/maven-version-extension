@@ -7,7 +7,11 @@ import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.DefaultModelProcessor;
+import org.apache.maven.model.building.FileModelSource;
 import org.apache.maven.model.building.ModelProcessor;
+import org.apache.maven.model.building.ModelSource2;
+import org.apache.maven.model.io.DefaultModelReader;
+import org.apache.maven.model.io.DefaultModelWriter;
 import org.apache.maven.model.io.ModelReader;
 import org.apache.maven.model.locator.ModelLocator;
 import org.apache.maven.session.scope.internal.SessionScope;
@@ -20,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +41,7 @@ public class MavenVersionExtension extends DefaultModelProcessor {
     @Requirement
     private final Logger logger;
 
+    @Requirement
     private final SessionScope sessionScope;
 
     @Inject
@@ -71,19 +77,47 @@ public class MavenVersionExtension extends DefaultModelProcessor {
 
     @Override
     public Model read(InputStream input, Map<String, ?> options) throws IOException {
-        return enhance(super.read(input, options), options);
+        Optional<URI> pom = getPom(options);
+        if (isLocalProject(pom)) {
+            File pomFile = new File(pom.get().getPath());
+            File versionedPomFile = getVersionPomFile(pomFile);
+            new DefaultModelWriter().write(versionedPomFile, null, enhance(new DefaultModelReader().read(pomFile, options), options));
+            return enhance(super.read(input, options), options);
+        } else {
+            return super.read(input, options);
+        }
+    }
+
+    public static File getVersionPomFile(File pomFile) {
+        return new File(pomFile.getParentFile(), "versioned-pom.xml");
+    }
+
+    private static boolean isLocalProject(Optional<URI> pom) {
+        return pom.filter(p->p.getScheme().equals("file")).map(URI::getPath).map(String::toLowerCase).map(p->p.endsWith(".xml")).orElse(false);
+    }
+
+    private static Optional<URI> getPom(Map<String, ?> options) {
+        return Optional.ofNullable(options).map(o->(ModelSource2) o.get(ModelProcessor.SOURCE)).map(o->o.getLocationURI());
     }
 
     private Model enhance(Model model, Map<String, ?> options) {
+//        if (!model.getPomFile().getName().endsWith(".xml")) {
+//            return model;
+//        }
 //        if (model.getProjectDirectory() != null)
 //        logger.warn(model.getProjectDirectory().toString());
-        Optional<MavenSession> mavenSession = Optional.empty(); //ofNullable(sessionScope.scope(Key.get(MavenSession.class), null).get());
+        Optional<MavenSession> mavenSession = Optional.empty();
+        try {
+            ofNullable(sessionScope.scope(Key.get(MavenSession.class), null).get());
+        } catch (Exception e) {
+            logger.warn("no session", e);
+        }
         String previous = model.toString();
         VersionMapper versionMapper = new VersionMapper(logger, model, mavenSession, options);
         model.setVersion(of(model).map(Model::getVersion).map(versionMapper::mapVersion).orElse(null));
         ofNullable(model.getParent()).ifPresent(p->enhance(p, versionMapper, options));
-        Optional.ofNullable(model.getDependencyManagement()).map(DependencyManagement::getDependencies).ifPresent(c -> c.stream().forEach(d -> d.setVersion(of(d).map(Dependency::getVersion).map(versionMapper::mapVersion).orElse(null))));
-        Optional.ofNullable(model.getDependencies()).ifPresent(c -> c.stream().forEach(d -> d.setVersion(of(d).map(Dependency::getVersion).map(versionMapper::mapVersion).orElse(null))));
+        ofNullable(model.getDependencyManagement()).map(DependencyManagement::getDependencies).ifPresent(c -> c.stream().forEach(d -> d.setVersion(of(d).map(Dependency::getVersion).map(versionMapper::mapVersion).orElse(null))));
+        ofNullable(model.getDependencies()).ifPresent(c -> c.stream().forEach(d -> d.setVersion(of(d).map(Dependency::getVersion).map(versionMapper::mapVersion).orElse(null))));
         String current = model.toString();
         if (!current.equals(previous)) {
             logger.info("Enhanced version: " + model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion());
@@ -108,7 +142,8 @@ public class MavenVersionExtension extends DefaultModelProcessor {
     private static final Pattern VERSION_EXTENSION_PATTERN = Pattern.compile(VERSION_EXTENSION_REGEX);
 
     private static final VersionExtension DEFAULT_VERSION_EXTENSION = new GitDevFlow();
-    private static final String DEFAULT_VERSION_KEY = "maven-version-extension-SNAPSHOT";
+    private static final String DEFAULT_VERSION_KEY = "[0|maven\\-version\\-extension]\\-SNAPSHOT";
+    private static final Pattern DEFAULT_VERSION_KEY_PATTERN = Pattern.compile(DEFAULT_VERSION_KEY);
 
     private static final Map<String, Class<? extends VersionExtension>> VERSION_EXTENSIONS;
 
@@ -143,7 +178,7 @@ public class MavenVersionExtension extends DefaultModelProcessor {
                         .orElseGet(() -> versionExtension(extensionName));
                 return matcher.replaceAll(extension.determineVersion(logger, model, mavenSession, options));
             } else {
-                return s.replace(DEFAULT_VERSION_KEY, DEFAULT_VERSION_EXTENSION.determineVersion(logger, model, mavenSession, options));
+                return DEFAULT_VERSION_KEY_PATTERN.matcher(s).replaceAll(DEFAULT_VERSION_EXTENSION.determineVersion(logger, model, mavenSession, options));
             }
         }
 

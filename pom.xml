@@ -51,12 +51,14 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>3.5.4</version>
+            <scope>provided</scope>
         </dependency>
         <!-- dependency for plexus annotation -->
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-component-annotations</artifactId>
             <version>1.7.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
