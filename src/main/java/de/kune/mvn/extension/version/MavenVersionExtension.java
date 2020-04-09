@@ -7,7 +7,6 @@ import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.building.DefaultModelProcessor;
-import org.apache.maven.model.building.FileModelSource;
 import org.apache.maven.model.building.ModelProcessor;
 import org.apache.maven.model.building.ModelSource2;
 import org.apache.maven.model.io.DefaultModelReader;
@@ -20,10 +19,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.Logger;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,12 +64,28 @@ public class MavenVersionExtension extends DefaultModelProcessor {
 
     @Override
     public Model read(File input, Map<String, ?> options) throws IOException {
-        return enhance(super.read(input, options), options);
+        Optional<URI> pom = getPom(options);
+        if (isLocalProject(pom)) {
+            File pomFile = new File(pom.get().getPath());
+            File versionedPomFile = getVersionPomFile(pomFile);
+            new DefaultModelWriter().write(versionedPomFile, null, enhance(new DefaultModelReader().read(pomFile, options), options));
+            return enhance(super.read(input, options), options);
+        } else {
+            return super.read(input, options);
+        }
     }
 
     @Override
     public Model read(Reader input, Map<String, ?> options) throws IOException {
-        return enhance(super.read(input, options), options);
+        Optional<URI> pom = getPom(options);
+        if (isLocalProject(pom)) {
+            File pomFile = new File(pom.get().getPath());
+            File versionedPomFile = getVersionPomFile(pomFile);
+            new DefaultModelWriter().write(versionedPomFile, null, enhance(new DefaultModelReader().read(pomFile, options), options));
+            return enhance(super.read(input, options), options);
+        } else {
+            return super.read(input, options);
+        }
     }
 
     @Override
@@ -101,17 +114,7 @@ public class MavenVersionExtension extends DefaultModelProcessor {
     }
 
     private Model enhance(Model model, Map<String, ?> options) {
-//        if (!model.getPomFile().getName().endsWith(".xml")) {
-//            return model;
-//        }
-//        if (model.getProjectDirectory() != null)
-//        logger.warn(model.getProjectDirectory().toString());
-        Optional<MavenSession> mavenSession = Optional.empty();
-        try {
-            ofNullable(sessionScope.scope(Key.get(MavenSession.class), null).get());
-        } catch (Exception e) {
-            logger.warn("no session", e);
-        }
+        Optional<MavenSession> mavenSession = getMavenSession();
         String previous = model.toString();
         VersionMapper versionMapper = new VersionMapper(logger, model, mavenSession, options);
         model.setVersion(of(model).map(Model::getVersion).map(versionMapper::mapVersion).orElse(null));
@@ -123,6 +126,16 @@ public class MavenVersionExtension extends DefaultModelProcessor {
             logger.info("Enhanced version: " + model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion());
         }
         return model;
+    }
+
+    private Optional<MavenSession> getMavenSession() {
+        Optional<MavenSession> mavenSession = Optional.empty();
+        try {
+            mavenSession = ofNullable(sessionScope.scope(Key.get(MavenSession.class), null).get());
+        } catch (Exception e) {
+            logger.warn("no session", e);
+        }
+        return mavenSession;
     }
 
     private void enhance(Parent parent, VersionMapper versionMapper, Map<String, ?> options) {
@@ -188,30 +201,19 @@ public class MavenVersionExtension extends DefaultModelProcessor {
                 if (!VersionExtension.class.isAssignableFrom(versionExtensionClass)) {
                     throw new IllegalStateException(className + " does not implement " + VersionExtension.class);
                 }
-                return (VersionExtension) versionExtensionClass.newInstance();
-            } catch (ClassNotFoundException e) {
-                throw new IllegalStateException("Could not load class " + className, e);
-            } catch (InstantiationException e) {
-                throw new IllegalStateException("Could not instatiate " + className, e);
-            } catch (IllegalAccessException e) {
+                return (VersionExtension) versionExtensionClass.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 throw new IllegalStateException("Could not instatiate " + className, e);
             }
         }
 
         private static VersionExtension versionExtension(Class<? extends VersionExtension> versionExtensionClass) {
             try {
-                return versionExtensionClass.newInstance();
-            } catch (InstantiationException e) {
-                throw new IllegalStateException("Could not instatiate " + versionExtensionClass, e);
-            } catch (IllegalAccessException e) {
+                return versionExtensionClass.getDeclaredConstructor(new Class[0]).newInstance(new Object[0]);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 throw new IllegalStateException("Could not instatiate " + versionExtensionClass, e);
             }
         }
 
-        //    public static void main(String[] args) {
-        //        String s = "Hallo ${version-extension[git-dev-flow]} und so";
-        //        String s = "Hallo ${version-extension[de.kune.mvn.extension.version.GitDevFlow]} und so";
-        //        System.out.println(mapVersion(s));
-        //    }
     }
 }
