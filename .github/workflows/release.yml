@@ -1,0 +1,30 @@
+name: Release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@master
+        with:
+          fetch-depth: '0'
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* && git tag
+      - name: Determine version tag
+        id: version
+        run: "tag=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) && echo ::set-output name=tag::$tag && echo version tag=$tag"
+      - name: Push version tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: akune
+          TAG: ${{ steps.version.outputs.tag }}
+        run: "commit=$(git rev-parse HEAD) && remote=$(git config --get remote.origin.url) && repo=$(basename $remote .git) && curl -s -X POST https://api.github.com/repos/$REPO_OWNER/$repo/git/refs -H \"Authorization: token $GITHUB_TOKEN\" -d \"{\\\"ref\\\": \\\"refs/tags/$TAG\\\", \\\"sha\\\": \\\"$commit\\\"}\""
+#      - name: Build Docker Image
+#        env:
+#          TAG: ${{ steps.version.outputs.tag }}
+#          DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+#          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+#        run: mvn verify jib:build

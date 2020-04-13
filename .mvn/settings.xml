@@ -16,7 +16,7 @@
             </pluginRepositories>
         </profile>
     </profiles>
-
+    <localRepository>.m2/repo</localRepository>
     <activeProfiles>
         <activeProfile>jitpack</activeProfile>
     </activeProfiles>

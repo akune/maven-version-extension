@@ -40,10 +40,6 @@
         <!-- plugins -->
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <gpg.defaultKeyring>false</gpg.defaultKeyring>
-        <gpg.publicKeyring>deploy/76A269DD.pub.gpg</gpg.publicKeyring>
-        <gpg.secretKeyring>deploy/76A269DD.sec.gpg</gpg.secretKeyring>
-        <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-        <!-- dependencies -->
     </properties>
 
     <dependencies>
@@ -104,20 +100,6 @@
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
