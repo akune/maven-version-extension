@@ -43,7 +43,9 @@ public class MavenVersionLifecycleParticipant extends AbstractMavenLifecyclePart
         for (MavenProject p: session.getProjects()) {
             File versionedPomFile = MavenVersionExtension.getVersionPomFile(p.getModel().getPomFile());
             if (versionedPomFile.exists()) {
-                versionedPomFile.deleteOnExit();
+                if (!versionedPomFile.delete()) {
+                    versionedPomFile.deleteOnExit();
+                }
             }
         }
     }
