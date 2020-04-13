@@ -1,0 +1,33 @@
+0000000000000000000000000000000000000000 6f5e5f24eb77f3870df65c560fab2024566f73fe Alexander Kune <alexander@kune.de> 1531491273 +0200	commit (initial): chore: initial commit
+6f5e5f24eb77f3870df65c560fab2024566f73fe cc65868ce4ad2abafe6a6b3910457f4114b148b0 Alexander Kune <alexander@kune.de> 1531491589 +0200	commit: chore: add test file
+cc65868ce4ad2abafe6a6b3910457f4114b148b0 76cabd7e8ca55cfddd615adb03b6d81402599f81 Alexander Kune <alexander@kune.de> 1531506836 +0200	pull: Fast-forward
+76cabd7e8ca55cfddd615adb03b6d81402599f81 1f6bc7b9a319725229742c17e99241187cdfcc20 Alexander Kune <alexander@kune.de> 1531506883 +0200	commit: chore: update travis configuration
+1f6bc7b9a319725229742c17e99241187cdfcc20 519831d117b4eaed279295a9151f956d74a4e68b Alexander Kune <alexander@kune.de> 1531507669 +0200	commit: chore: update travis configuration
+519831d117b4eaed279295a9151f956d74a4e68b 87690b84b080963516396ff7352768f8f896d637 Alexander Kune <alexander@kune.de> 1531512829 +0200	commit: chore: update travis configuration
+87690b84b080963516396ff7352768f8f896d637 a51e6823fc78e5e1eda8b0d9067581f77b56a69b Alexander Kune <alexander@kune.de> 1531516612 +0200	commit: feat: update project model
+a51e6823fc78e5e1eda8b0d9067581f77b56a69b 213f4678fbd087147ce69c4284b813db9075ac0a Alexander Kune <alexander@kune.de> 1531517055 +0200	commit (amend): feat: update project model
+213f4678fbd087147ce69c4284b813db9075ac0a 63085fe5e8df84090dce2b758f1ab9be8efe6a36 Alexander Kune <alexander@kune.de> 1531519670 +0200	commit: feat:
+63085fe5e8df84090dce2b758f1ab9be8efe6a36 dd6f1ae643d745221779fde0e658cf78ac41c9db Alexander Kune <alexander@kune.de> 1539895626 +0200	commit: feat: move to a multi module project
+dd6f1ae643d745221779fde0e658cf78ac41c9db 887ce185d88fc6fe51c561e0dd0134d0b91fd5eb Alexander Kune <alexander@kune.de> 1539896365 +0200	commit: fix: perform conditional tagging
+887ce185d88fc6fe51c561e0dd0134d0b91fd5eb f65df54144281e221afb1d4338c053d1831e2456 Alexander Kune <alexander@kune.de> 1539896519 +0200	commit: fix: perform conditional tagging
+f65df54144281e221afb1d4338c053d1831e2456 fdfa382205e888526326800455d78607186a1521 Alexander Kune <alexander@kune.de> 1539896949 +0200	commit: fix: re-attach git repo
+fdfa382205e888526326800455d78607186a1521 16526b31091e4ae89aabbf5ede7c7bb6c331bd68 Alexander Kune <alexander@kune.de> 1586769071 +0200	pull: Fast-forward
+16526b31091e4ae89aabbf5ede7c7bb6c331bd68 61549be1dff3a94a633bd28ae6c92b0821104229 Alexander Kune <alexander@kune.de> 1586769584 +0200	commit: chore: something
+61549be1dff3a94a633bd28ae6c92b0821104229 30fb1dc053b66fbca9d7ed9bc4f28018412d4e78 Alexander Kune <alexander@kune.de> 1586770224 +0200	commit: feat: use github actions
+30fb1dc053b66fbca9d7ed9bc4f28018412d4e78 ac23e54e78aaa47bc3fb525d86a9efb3351e61ca Alexander Kune <alexander@kune.de> 1586770592 +0200	commit: feat: use github actions
+ac23e54e78aaa47bc3fb525d86a9efb3351e61ca f7e6d80d34f63d3ebd765e4d085b44ef8dc145ea Alexander Kune <alexander@kune.de> 1586770810 +0200	commit: feat: fetch all tags
+f7e6d80d34f63d3ebd765e4d085b44ef8dc145ea a8590911b8f768681b5fba2eb03225cab2286b7b Alexander Kune <alexander@kune.de> 1586770858 +0200	commit: feat: fetch all tags
+a8590911b8f768681b5fba2eb03225cab2286b7b 8cf663e673a9a3c28781074e87f982f8a021d9f5 Alexander Kune <alexander@kune.de> 1586771487 +0200	commit: feat: change naming
+8cf663e673a9a3c28781074e87f982f8a021d9f5 1597b3af670ddae92aecdf9f134af31f5c6244db Alexander Kune <alexander@kune.de> 1586771584 +0200	commit: chore: add names
+1597b3af670ddae92aecdf9f134af31f5c6244db 4ae6ad57a33086a20d69c7c0695e9ecb01ba6964 Alexander Kune <alexander@kune.de> 1586771703 +0200	commit: chore: doc
+4ae6ad57a33086a20d69c7c0695e9ecb01ba6964 ce344598be5e4e664f5a385952a52393d8d61f08 Alexander Kune <alexander@kune.de> 1586772586 +0200	commit: chore: push tag directly
+ce344598be5e4e664f5a385952a52393d8d61f08 01bdafe89c476aba6ce289c26dfd615513a9fb77 Alexander Kune <alexander@kune.de> 1586772706 +0200	commit: chore: push tag directly
+01bdafe89c476aba6ce289c26dfd615513a9fb77 ada0aecc5d1c80f5b6025863683554a599c626e4 Alexander Kune <alexander@kune.de> 1586773250 +0200	commit: chore: push tag directly
+ada0aecc5d1c80f5b6025863683554a599c626e4 cf046a8563d12e4a93046740843f7ca2bb9ff1d5 Alexander Kune <alexander@kune.de> 1586773296 +0200	commit: chore: push tag directly
+cf046a8563d12e4a93046740843f7ca2bb9ff1d5 5ed980df63167d36b405422785e9727b896c1119 Alexander Kune <alexander@kune.de> 1586773472 +0200	commit: chore: push tag directly
+5ed980df63167d36b405422785e9727b896c1119 4e1d1b6019a238de69bf2e4009befd67008dab2d Alexander Kune <alexander@kune.de> 1586775976 +0200	commit: chore: push tag directly
+4e1d1b6019a238de69bf2e4009befd67008dab2d 8dd5137b7ed72a4a5e54ecd28c9be6d52be33112 Alexander Kune <alexander@kune.de> 1586776354 +0200	commit: chore: push tag directly
+8dd5137b7ed72a4a5e54ecd28c9be6d52be33112 25728b83bf135a955779f1123bbcd507f34a8522 Alexander Kune <alexander@kune.de> 1586783395 +0200	commit: build: use latest maven version extension
+25728b83bf135a955779f1123bbcd507f34a8522 f3080af2ed7d80358ab889043f778991045829b0 Alexander Kune <alexander@kune.de> 1586784287 +0200	commit: build(deactivate local repository):
+f3080af2ed7d80358ab889043f778991045829b0 b0e5a8bb235782f815e942e74ff2b0e5e5a2f9c8 Alexander Kune <alexander@kune.de> 1586784353 +0200	commit (amend): build: deactivate local repository
+b0e5a8bb235782f815e942e74ff2b0e5e5a2f9c8 1018137a3dc4ae26d9d50ac877972a5b03865553 Alexander Kune <alexander@kune.de> 1586784387 +0200	pull: Merge made by the 'recursive' strategy.
