@@ -104,14 +104,16 @@ public class GitDevFlow implements VersionExtension {
             }
             logger.info("Head refs: " + headRefs);
 
-            List<Ref> tags = getTags(repository);
-            Optional<String> taggedVersion = determineTaggedVersion(tags, headRefs.getObjectId().toString());
-            if (taggedVersion.isPresent()) {
-                logger.info("No commit since last release tag " + taggedVersion.get());
-                return taggedVersion.get();
+            String branch = determineBranch(logger, repository);
+            if (!releaseBranchPattern.matcher(branch.toLowerCase()).matches() && !hotfixBranchPattern.matcher(branch.toLowerCase()).matches() && !isSnapshotBranch(logger, repository, branch)) {
+                List<Ref> tags = getTags(repository);
+                Optional<String> taggedVersion = determineTaggedVersion(tags, headRefs.getObjectId().toString());
+                if (taggedVersion.isPresent()) {
+                    logger.info("No commit since last release tag " + taggedVersion.get());
+                    return taggedVersion.get();
+                }
             }
 
-            String branch = determineBranch(logger, repository);
             if (releaseBranchPattern.matcher(branch.toLowerCase()).matches()) {
                 return determineReleaseVersion(logger, repository, branch);
             } else if (hotfixBranchPattern.matcher(branch.toLowerCase()).matches()) {

@@ -50,9 +50,10 @@ public class GitDevFlowTest {
                     { "feat-a-SNAPSHOT", "branch-with-merged-release" },
                     { "0.1.1", "merged-branch-with-merged-release" },
                     { "0.1.0", "detached-master-tagged" },
-                    { "0.43.0.support.0.43.13", "detached-master-support-tagged" },
+                    { "0.0.1", "detached-master-support-tagged" },
                     { "0.0.1.support.0.0.3", "support-branch-with-multiple-tags-and-release-tag"},
                     { "1.2.3", "incorrect-tag"},
+                    { "feature-something-new-SNAPSHOT", "branch-of-tagged-master-without-commit"},
             });
     }
 
