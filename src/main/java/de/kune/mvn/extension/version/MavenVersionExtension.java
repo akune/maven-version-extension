@@ -106,7 +106,8 @@ public class MavenVersionExtension extends DefaultModelProcessor {
     }
 
     private static boolean isLocalProject(Optional<URI> pom) {
-        return pom.filter(p->p.getScheme().equals("file")).map(URI::getPath).map(String::toLowerCase).map(p->p.endsWith(".xml")).orElse(false);
+//        return pom.filter(p->p.getScheme().equals("file")).map(URI::getPath).map(String::toLowerCase).map(p->p.endsWith(".xml")).orElse(false);
+        return pom.filter(p->p.getScheme().equals("file")).map(URI::getPath).map(String::toLowerCase).map(p->p.endsWith("/pom.xml")).orElse(false);
     }
 
     private static Optional<URI> getPom(Map<String, ?> options) {
